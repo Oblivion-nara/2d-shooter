@@ -44,7 +44,9 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 	 */
 	public Point getMousePositionOnScreen(){
 		try {
-			return MouseInfo.getPointerInfo().getLocation();
+			Point p = MouseInfo.getPointerInfo().getLocation();
+			p.translate(16, 16);
+			return p;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return c.getMousePosition();
@@ -57,7 +59,9 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 	 */
 	public Point getMousePositionRelativeToComponent(){
 		try {
-			return c.getMousePosition();
+			Point p = c.getMousePosition();
+			p.translate(16, 16);
+			return p;
 		} catch (Exception e){
 			e.printStackTrace();
 			return MouseInfo.getPointerInfo().getLocation();

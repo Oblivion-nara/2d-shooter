@@ -4,31 +4,33 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 public class Player {
 
-	public static Point2D.Double location;
+	public Point2D.Double location;
+	public Rectangle hitBox;
 	private Image picture;
 	private int playArea = 8;
 	private float angle;
 	private Point mouse;
-	
-	public int health, speed, accuracy, rateOfFire, damage, maxHealth;
+	public int health, speed, accuracy, rateOfFire, damage, maxHealth, points;
 
 	public Player() {
 
 		picture = ResourceLoader.getImage("player.png");
 		location = new Point2D.Double(Main.width/2, Main.height/2);
+		hitBox = new Rectangle((Main.width/2), (Main.height/2), 32, 32);
 		angle = 0;
-		maxHealth = 100;
+		maxHealth = 1000;
 		health = maxHealth;
 		speed = 3;
 		accuracy = 50;
 		rateOfFire = 5;
-		damage = 20;
+		damage = 10;
 	}
 
 	// 0,0 top-left
@@ -38,6 +40,10 @@ public class Player {
 		return location;
 	}
 
+	public void damage(int damage){
+		health -= damage;
+	}
+	
 	public void setLocation(Point2D.Double location) {
 		this.location = location;
 	}
@@ -136,6 +142,7 @@ public class Player {
 		
 		mouse = Main.input.getMousePositionOnScreen();
 		angle = (float)MathHelper.getAngle(new Point((int)location.x, (int)location.y),mouse);
+		hitBox.setLocation((int)location.x, (int)location.y);
 		
 	}
 

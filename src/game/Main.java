@@ -1,7 +1,10 @@
 package game;
 
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
@@ -17,6 +20,7 @@ public class Main extends JFrame {
 
 	public static InputHandler input;
 	public static Random random;
+	public static boolean sound;
 	public static int width, height;
 	public static float ratio, tilesW, tilesH, widthpx, heightpx, zeroXCoord, zeroYCoord,
 			root2 = (float) Math.sqrt(2.0);
@@ -43,8 +47,8 @@ public class Main extends JFrame {
 	}
 
 	public void initialise() {
+		sound = false;
 		running = true;
-		input = new InputHandler(this);
 		random = new Random();
 		previousTime = System.nanoTime();
 		FPS = this.getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
@@ -55,6 +59,19 @@ public class Main extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setUndecorated(true);
 		this.setVisible(true);
+		Cursor cursor = this.getCursor();
+		boolean fix = false;
+		while(!fix){
+			try{
+				cursor = Toolkit.getDefaultToolkit().createCustomCursor(ResourceLoader.getImage("cursor.png"), new Point(getX(), getY()), "c");
+				fix = true;
+			}catch(Exception e){
+				System.out.println("fail");
+				e.printStackTrace();
+			}
+		}
+		setCursor(cursor);
+		input = new InputHandler(this);
 		width = this.getWidth();
 		height = this.getHeight();
 		ratio = (float) width / (float) height;
@@ -69,6 +86,7 @@ public class Main extends JFrame {
 		heightpx = (float) height / tilesH;
 		widthpx = (float) width / tilesW;
 		map = new Map();
+//		Sound.dayNNight.loop();
 	}
 
 	
