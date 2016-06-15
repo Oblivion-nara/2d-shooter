@@ -1,4 +1,4 @@
-package game;
+package entities;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,6 +9,10 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
+import helpers.MathHelper;
+import helpers.ResourceLoader;
+import mainGameLoop.Main;
+
 public class Player {
 
 	public Point2D.Double location;
@@ -17,7 +21,7 @@ public class Player {
 	private int playArea = 8;
 	private float angle;
 	private Point mouse;
-	public int health, speed, accuracy, rateOfFire, damage, maxHealth, points;
+	public int health, speed, accuracy, rateOfFire, damage, maxHealth, bulletSpeed, points;
 
 	public Player() {
 
@@ -28,6 +32,7 @@ public class Player {
 		maxHealth = 1000;
 		health = maxHealth;
 		speed = 3;
+		bulletSpeed = 1000;
 		accuracy = 50;
 		rateOfFire = 5;
 		damage = 10;

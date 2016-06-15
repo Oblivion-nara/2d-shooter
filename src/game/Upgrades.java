@@ -8,20 +8,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import game.Player;
+import entities.Player;
+import gamePlay.Map;
 
 public class Upgrades extends Frame {
 
 	private static final long serialVersionUID = 10L;
 
+	public Map map;
+	
 	public Upgrades(Player player) {
 		setTitle("Upgrades");
-		setSize(350, 300);
+		setSize(350, 360);
 		setVisible(true);
 		setLayout(null);
 
 		addWindowListener(new WindowListener() {
-
 			@Override
 			public void windowClosing(WindowEvent e) {
 				e.getWindow().dispose();
@@ -29,37 +31,27 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void windowClosed(WindowEvent e) {
-				Map.newWave();
+				Map.nextWave();
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void windowIconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void windowOpened(WindowEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -117,32 +109,40 @@ public class Upgrades extends Frame {
 		add(firing_speed_lv);
 		add(firing_speed_b);
 
+		Label bullet_speed_l = new Label("Bullet Speed");
+		Label bullet_speed_lv = new Label("" + player.bulletSpeed);
+		Button bullet_speed_b = new Button("+");
+		bullet_speed_l.setBounds(10, 240, 100, 30);
+		bullet_speed_lv.setBounds(120, 240, 60, 30);
+		bullet_speed_b.setBounds(190, 240, 30, 30);
+		add(bullet_speed_l);
+		add(bullet_speed_lv);
+		add(bullet_speed_b);
+
 		Label max_health_l = new Label("Max Health");
 		Label max_health_lv = new Label("" + player.maxHealth);
 		Button max_health_b = new Button("+");
-		max_health_l.setBounds(10, 240, 100, 30);
-		max_health_lv.setBounds(120, 240, 60, 30);
-		max_health_b.setBounds(190, 240, 30, 30);
+		max_health_l.setBounds(10, 280, 100, 30);
+		max_health_lv.setBounds(120, 280, 60, 30);
+		max_health_b.setBounds(190, 280, 30, 30);
 		add(max_health_l);
 		add(max_health_lv);
 		add(max_health_b);
 
-		/* Button close = new Button("Close");
-		 * close.setBounds(250, 240, 60, 30);
-		 * close.addActionListener(new ActionListener() {
+		/*
+		 * Button close = new Button("Close"); close.setBounds(250, 240, 60,
+		 * 30); close.addActionListener(new ActionListener() {
 		 * 
-		 * @Override
-		 * public void actionPerformed(ActionEvent e) {
-		 * Map.newWave();
-		 * }
-		 * });
-		 * add(close); */
+		 * @Override public void actionPerformed(ActionEvent e) { Map.newWave();
+		 * } }); add(close);
+		 */
 
 		hp_b.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				if (((double) player.health / (double) player.maxHealth) < 1) {
 					player.points--;
 					player.health = player.maxHealth;
@@ -156,7 +156,8 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				player.points--;
 				player.speed++;
 				upgrade_points.setText("Point left: " + player.points);
@@ -168,7 +169,8 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				player.points--;
 				player.accuracy++;
 				upgrade_points.setText("Point left: " + player.points);
@@ -180,7 +182,8 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				player.points--;
 				player.damage++;
 				upgrade_points.setText("Point left: " + player.points);
@@ -192,11 +195,25 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				player.points--;
 				player.rateOfFire++;
 				upgrade_points.setText("Point left: " + player.points);
 				firing_speed_lv.setText("" + player.rateOfFire);
+			}
+		});
+		
+		bullet_speed_b.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (player.points <= 0)
+					return;
+				player.points--;
+				player.rateOfFire += 100;
+				upgrade_points.setText("Point left: " + player.points);
+				bullet_speed_lv.setText("" + player.bulletSpeed);
 			}
 		});
 
@@ -204,7 +221,8 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.points <= 0) return;
+				if (player.points <= 0)
+					return;
 				player.points--;
 				player.maxHealth += 50;
 				upgrade_points.setText("Point left: " + player.points);
@@ -214,6 +232,8 @@ public class Upgrades extends Frame {
 	}
 
 	public static void main(String args[]) {
-		new Upgrades(new Player());
+		Player p =new Player();
+		p.points = 2;
+		new Upgrades(p);
 	}
 }

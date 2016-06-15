@@ -1,4 +1,4 @@
-package game;
+package helpers;
 
 import java.awt.Component;
 import java.awt.Dimension;

@@ -1,4 +1,4 @@
-package game;
+package helpers;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 
-import main.ResourceLoader;
+import mainGameLoop.Main;
 
 public class Sound {
 

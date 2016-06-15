@@ -1,4 +1,4 @@
-package game;
+package entities;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -7,21 +7,25 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
+import helpers.MathHelper;
+import helpers.ResourceLoader;
+import mainGameLoop.Main;
+
 public class Enemy {
 
 	private Point2D.Double location;
 	private Image picture;
 	public int health;
-	public float speed = 2f, angle;
+	public float speed = 100f, angle;
 	private Player p;
 	public long attackTimer;
 
-	public Enemy(Player p) {
+	public Enemy(Player p, int health) {
 		this.p = p;
-		health = 100;
+		this.health = health;
 		picture = ResourceLoader.getImage("enemy.png");
 		location = new Point2D.Double(Main.random.nextInt(Main.width), Main.random.nextInt(Main.height - 256) + 256);
-		speed += Main.random.nextGaussian() * 0.25;
+		this.speed = (float) (speed + Main.random.nextGaussian() * 20);
 		attackTimer = System.currentTimeMillis() + 1000;
 	}
 
@@ -43,10 +47,11 @@ public class Enemy {
 		return false;
 	}
 
-	public void update() {
+	public void update(float deltas) {
 
 		angle = (float) MathHelper.getAngle(new Point((int) location.x, (int) location.y),
 				new Point((int) p.location.x, (int) p.location.y));
+		float speed = this.speed * deltas;
 		Point2D.Double gain = MathHelper.getPoint(location, p.location, speed, 0);
 		location.setLocation(location.x + gain.x, location.y + gain.y);
 

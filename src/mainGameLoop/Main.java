@@ -1,4 +1,4 @@
-package game;
+package mainGameLoop;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -9,14 +9,21 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import game.MainMenu;
+import gamePlay.Map;
+import helpers.InputHandler;
+import helpers.ResourceLoader;
 
 public class Main extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static boolean running;
-	private static int FPS;
-	private static float SPF;
-	private static long currentTime, previousTime, deltaTime;
+	private boolean running, pause;
+	private int FPS;
+	private float SPF, deltas;
+	private long currentTime, previousTime, deltaTime;
+	private Image BufferImage;
 
 	public static InputHandler input;
 	public static Random random;
@@ -24,9 +31,9 @@ public class Main extends JFrame {
 	public static int width, height;
 	public static float ratio, tilesW, tilesH, widthpx, heightpx, zeroXCoord, zeroYCoord,
 			root2 = (float) Math.sqrt(2.0);
-	private static float deltas;
-	
+
 	private Map map;
+	private MainMenu manu;
 
 	public static void main(String args[]) {
 		Main main = new Main();
@@ -40,37 +47,31 @@ public class Main extends JFrame {
 			currentTime = System.nanoTime();
 			deltaTime = currentTime - previousTime;
 			deltas = ((float) deltaTime / 1000000000f);
-			update(deltas);
+			update();
 			draw();
+			if(pause){
+//				menu.run(BufferImage);
+			}
 			previousTime = currentTime;
 		}
 	}
 
-	public void initialise() {
+	private void initialise() {
+
+		setFrame();
+		setVariables();
+		setCursor();
+
+		// Sound.dayNNight.loop();
+	}
+
+	private void setVariables() {
 		sound = false;
 		running = true;
 		random = new Random();
 		previousTime = System.nanoTime();
 		FPS = this.getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
 		SPF = 1f / FPS;
-		this.setTitle("Day And Night");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(InputHandler.screenSize);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setUndecorated(true);
-		this.setVisible(true);
-		Cursor cursor = this.getCursor();
-		boolean fix = false;
-		while(!fix){
-			try{
-				cursor = Toolkit.getDefaultToolkit().createCustomCursor(ResourceLoader.getImage("cursor.png"), new Point(getX(), getY()), "c");
-				fix = true;
-			}catch(Exception e){
-				System.out.println("fail");
-				e.printStackTrace();
-			}
-		}
-		setCursor(cursor);
 		input = new InputHandler(this);
 		width = this.getWidth();
 		height = this.getHeight();
@@ -86,31 +87,53 @@ public class Main extends JFrame {
 		heightpx = (float) height / tilesH;
 		widthpx = (float) width / tilesW;
 		map = new Map();
-//		Sound.dayNNight.loop();
 	}
 
-	
+	private void setCursor() {
+		Cursor cursor = this.getCursor();
+		boolean fix = false;
+		while (!fix) {
+			try {
+				cursor = Toolkit.getDefaultToolkit().createCustomCursor(ResourceLoader.getImage("cursor.png"),
+						new Point(getX(), getY()), "c");
+				fix = true;
+			} catch (Exception e) {
+				System.out.println("fail");
+				e.printStackTrace();
+			}
+		}
+		setCursor(cursor);
+	}
 
-	private void update(float deltaTime) {
+	private void setFrame() {
+		this.setTitle("Day And Night");
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setSize(InputHandler.screenSize);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setUndecorated(true);
+		this.setVisible(true);
+	}
 
-		map.update();
+	private void update() {
+
+		map.update(deltas);
 
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
-			System.exit(0);
+			pause = true;
 		}
 	}
 
-	public void draw() {
+	private void draw() {
 
+		BufferImage = this.createImage(width, height);
+		Graphics BufferGraphics = BufferImage.getGraphics();
+		// draw here
+
+		map.draw(BufferGraphics);
+
+		// to here
 		Graphics g = this.getGraphics();
-		Image offImage = this.createImage(width, height);
-		Graphics offGraphics = offImage.getGraphics();
-		//draw here
-		
-		map.draw(offGraphics);
-		
-		//to here
-		g.drawImage(offImage, 0, 0, width, height, null);
+		g.drawImage(BufferImage, 0, 0, width, height, null);
 
 	}
 

@@ -1,4 +1,4 @@
-package game;
+package gamePlay;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,6 +11,12 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import entities.Enemy;
+import entities.Player;
+import helpers.MathHelper;
+import helpers.ResourceLoader;
+import mainGameLoop.Main;
+
 public class Map {
 
 	private BufferedImage background;
@@ -21,19 +27,27 @@ public class Map {
 	private ArrayList<Point2D.Double> trajectories;
 	private ArrayList<Line2D.Double> shots;
 
-	private int numOfEnemies = 20;
-	private float healthRatio = 1;
-	private static long timer;
+	private float healthRatio;
 
-	// Wave stuff
-	private int zombiesPerSecond = 2;
-	private int zombieHealth = 100;
-	private long shotsound = 0;
-
-	private long shottimer = 100;
-	private static int waveDuration = 15000;
-	private static int waveDurationLeft = waveDuration;
+	// base Wave stuff
+	private static int wave = 0;
+	private float baseZombiesPerSecond = 0.5f;
+	private long spawnTimer = 0;
+	private int baseMaxZombies = 20;
+	private int baseZombiesPerRound = 20;
+	private int baseZombieHealth = 100;
 	private static boolean upgradesOpened = false;
+	
+	// current wave stuff
+	private int maxZombies;
+	private int zombiesPerRound;
+	private int zombieHealth;
+	private int zombiesSpawned;
+	
+	//shooting
+	private long shotsound = 0;
+	private long shottimer = 100;
+
 
 	public Map() {
 		init();
@@ -48,11 +62,13 @@ public class Map {
 		trajectories = new ArrayList<Point2D.Double>();
 		shots = new ArrayList<Line2D.Double>();
 		background = new BufferedImage(Main.width, Main.height, BufferedImage.TYPE_INT_ARGB);
+		
 		Graphics g = background.getGraphics();
 		g.setColor(new Color(0xdd, 0xa3, 0x3d));
 		g.fillRect(0, 0, Main.width, Main.height);
 		g.setColor(new Color(0x04, 0xac, 0x1c));
 		g.fillRect(0, 0, Main.width, 256);
+		
 		Image shrub = ResourceLoader.getImage("shrub.png");
 		for (int i = 0; i < Main.random.nextInt(10) + 5; i++) {
 			g.drawImage(shrub, Main.random.nextInt(Main.width), Main.random.nextInt(Main.height), null);
@@ -69,43 +85,61 @@ public class Map {
 				x += 512;
 			}
 		}
-		timer = System.currentTimeMillis() + 1000;
+		wave = 1;
 
 	}
 
 	private void spawn() {
-		if (waveDurationLeft > 0 && System.currentTimeMillis() >= timer) {
-			Enemy e = new Enemy(player);
+		
+		int maxZombies = (int)Math.pow(baseMaxZombies,wave);
+		
+		if(zombiesSpawned >= maxZombies && System.currentTimeMillis() >= spawnTimer){
+			Enemy e = new Enemy(player, zombieHealth);
 			e.health = zombieHealth;
 			enemies.add(e);
 			enemyLocations.add(new Rectangle((int) enemies.get(enemies.indexOf(e)).getLocation().x - 16,
 					(int) enemies.get(enemies.indexOf(e)).getLocation().y - 16, 32, 32));
-			timer += 1000 / zombiesPerSecond + 1;
-			waveDurationLeft -= 1000 / zombiesPerSecond + 1;
-			if (waveDurationLeft < 0) {
-				if (zombiesPerSecond >= 5)
-					zombiesPerSecond *= 1.2;
-				else
-					zombiesPerSecond++;
-				zombieHealth *= 1.2;
-			}
-		} else if (waveDurationLeft <= 0 && !upgradesOpened && !enemies.stream().anyMatch(e -> e.health > 0)) {
-			new Upgrades(player);
-			upgradesOpened = true;
+			zombiesSpawned++;
+			spawnTimer = System.currentTimeMillis() + (1000/zombiesPerRound);
+			
 		}
+		
+//		if (waveDurationLeft > 0 && System.currentTimeMillis() >= waveTimer) {
+//			Enemy e = new Enemy(player);
+//			e.health = zombieHealth;
+//			enemies.add(e);
+//			enemyLocations.add(new Rectangle((int) enemies.get(enemies.indexOf(e)).getLocation().x - 16,
+//					(int) enemies.get(enemies.indexOf(e)).getLocation().y - 16, 32, 32));
+//			waveTimer += 1000 / zombiesPerSecond + 1;
+//			waveDurationLeft -= 1000 / zombiesPerSecond + 1;
+//			if (waveDurationLeft < 0) {
+//				if (zombiesPerSecond >= 5)
+//					zombiesPerSecond *= 1.1;
+//				else
+//					zombiesPerSecond++;
+//				zombieHealth *= 1.1;
+//			}
+//		} else if (waveDurationLeft <= 0 && !upgradesOpened && !enemies.stream().anyMatch(e -> e.health >= 0)) {
+//			new Upgrades(player);
+//			upgradesOpened = true;
+//		}
 	}
 
-	public static void newWave() {
-		timer = System.currentTimeMillis();
-		waveDurationLeft = waveDuration;
+	public void startWaveX(int waveNumber){
+		
+	}
+	
+	public static void nextWave() {
+		wave++;
+		
 		upgradesOpened = false;
 	}
 
-	public void shoot(Point mouseCoord) {
+	private void shoot(Point mouseCoord) {
 		if (System.currentTimeMillis() > shottimer) {
 			double accuracy = 1.0 / player.accuracy;
 			shots.add(new Line2D.Double(player.location.x, player.location.y, player.location.x, player.location.y));
-			double speed = 20.0;
+			double speed = player.bulletSpeed ;
 			trajectories.add(MathHelper.getPoint(new Point2D.Double(player.location.x, player.location.y),
 					new Point2D.Double(mouseCoord.getX(), mouseCoord.getY()), speed, accuracy));
 			if (System.currentTimeMillis() > shotsound) {
@@ -116,7 +150,7 @@ public class Map {
 		}
 	}
 
-	public void playerDamage() {
+	private void playerDamage() {
 
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemyLocations.get(i).intersects(player.hitBox)
@@ -126,15 +160,8 @@ public class Map {
 			}
 		}
 	}
-
-	public void update() {
-		playerDamage();
-		spawn();
-		player.update();
-		if (Main.input.isMouseDown(MouseEvent.BUTTON1)) {
-			shoot(Main.input.getMousePositionOnScreen());
-		}
-
+	
+	private void enemyDamage(){
 		for (int i = 0; i < enemies.size(); i++) {
 
 			if (enemies.get(i).isAlive()) {
@@ -154,13 +181,19 @@ public class Map {
 						}
 					}
 				}
+			}else{
+				enemyLocations.remove(i);
+				enemies.remove(i);
+				i--;
 			}
 		}
+	}
 
+	private void updateShots(float deltas){
 		for (int i = 0; i < shots.size(); i++) {
 
-			shots.get(i).setLine(shots.get(i).getX1() + trajectories.get(i).getX(),
-					shots.get(i).getY1() + trajectories.get(i).getY(), shots.get(i).getX1(), shots.get(i).getY1());
+			shots.get(i).setLine(shots.get(i).getX1() + (trajectories.get(i).getX() * deltas),
+					shots.get(i).getY1() + (trajectories.get(i).getY() * deltas), shots.get(i).getX1(), shots.get(i).getY1());
 		}
 		Rectangle rect = new Rectangle(0, 0, Main.width, Main.height);
 		for (int i = 0; i < shots.size(); i++) {
@@ -170,8 +203,21 @@ public class Map {
 			}
 
 		}
+	}
+	
+	public void update(float deltas) {
+		playerDamage();
+		player.update();
+		updateShots(deltas);
+		enemyDamage();
+		spawn();
+		
+		if (Main.input.isMouseDown(MouseEvent.BUTTON1)) {
+			shoot(Main.input.getMousePositionOnScreen());
+		}
+		
 		for (Enemy enemy : enemies) {
-			enemy.update();
+			enemy.update(deltas);
 		}
 
 		healthRatio = (player.health * 1000f / player.maxHealth);
