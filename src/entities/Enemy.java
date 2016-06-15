@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -16,7 +17,7 @@ public class Enemy {
 	private Point2D.Double location;
 	private Image picture;
 	public int health;
-	public float speed = 100f, angle;
+	public float speed = 90f, angle;
 	private Player p;
 	public long attackTimer;
 
@@ -41,9 +42,6 @@ public class Enemy {
 		if (health >= 0) {
 			return true;
 		}
-		if (Main.random.nextDouble() > 0.8) {
-			p.points++;
-		}
 		return false;
 	}
 
@@ -60,6 +58,9 @@ public class Enemy {
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 
+		g2.setColor(Color.orange);
+		g2.drawRect( (int) location.x - 16, (int) location.y - 16, 32, 32);
+		//-------------------------------------------------------------
 		AffineTransform save = g2.getTransform();
 		AffineTransform rotate = new AffineTransform();
 		rotate.rotate(angle + (Math.PI / 2), location.x, location.y);

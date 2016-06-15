@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,11 +18,13 @@ public class Player {
 
 	public Point2D.Double location;
 	public Rectangle hitBox;
+	public int health, accuracy, rateOfFire, damage, maxHealth, bulletSpeed, points;
+	public float speed;
+	
 	private Image picture;
-	private int playArea = 8;
+	private int playArea = 10;
 	private float angle;
 	private Point mouse;
-	public int health, speed, accuracy, rateOfFire, damage, maxHealth, bulletSpeed, points;
 
 	public Player() {
 
@@ -31,7 +34,7 @@ public class Player {
 		angle = 0;
 		maxHealth = 1000;
 		health = maxHealth;
-		speed = 3;
+		speed = 100f;
 		bulletSpeed = 1000;
 		accuracy = 50;
 		rateOfFire = 5;
@@ -53,96 +56,96 @@ public class Player {
 		this.location = location;
 	}
 
-	public void moveUp() {
+	public void moveUp(float deltas) {
 		if(location.y > 256){
-			location.y -= speed;
+			location.y -= speed * deltas;
 		}
 	}
 
-	public void moveDown() {
+	public void moveDown(float deltas) {
 		if(location.y < (playArea-1)*Main.height/playArea){
-			location.y += speed;
+			location.y += speed * deltas;
 		}
 	}
 
-	public void moveRight() {
+	public void moveRight(float deltas) {
 		if(location.x < (playArea-1)*Main.width/playArea){
-			location.x += speed;
+			location.x += speed * deltas;
 		}
 	}
 
-	public void moveLeft() {
+	public void moveLeft(float deltas) {
 		if(location.x > Main.width/playArea){
-			location.x -= speed;
+			location.x -= speed * deltas;
 		}
 	}
 
-	public void moveUR() {
+	public void moveUR(float deltas) {
 		if (location.y <= 256) {
-			moveRight();
+			moveRight(deltas);
 		} else if (location.x >= (playArea-1)*Main.width/playArea) {
-			moveUp();
+			moveUp(deltas);
 		} else {
-			location.x += (speed) / Main.root2;
-			location.y -= (speed) / Main.root2;
+			location.x += (speed * deltas) / Main.root2;
+			location.y -= (speed * deltas) / Main.root2;
 		}
 	}
 
-	public void moveUL() {
+	public void moveUL(float deltas) {
 		if (location.y <= 256) {
-			moveLeft();
+			moveLeft(deltas);
 		} else if (location.x <= Main.width/playArea) {
-			moveUp();
+			moveUp(deltas);
 		} else {
-			location.x -= (speed) / Main.root2;
-			location.y -= (speed) / Main.root2;
+			location.x -= (speed * deltas) / Main.root2;
+			location.y -= (speed * deltas) / Main.root2;
 		}
 	}
 
-	public void moveDR() {
+	public void moveDR(float deltas) {
 		if (location.y >= (playArea-1)*Main.height/playArea) {
-			moveRight();
+			moveRight(deltas);
 		} else if (location.x >= (playArea-1)*Main.width/playArea) {
-			moveDown();
+			moveDown(deltas);
 		} else {
-			location.x += (speed) / Main.root2;
-			location.y += (speed) / Main.root2;
+			location.x += (speed * deltas) / Main.root2;
+			location.y += (speed * deltas) / Main.root2;
 		}
 	}
 
-	public void moveDL() {
+	public void moveDL(float deltas) {
 		if (location.y >= (playArea-1)*Main.height/playArea) {
-			moveLeft();
+			moveLeft(deltas);
 		} else if (location.x <= Main.width/playArea) {
-			moveDown();
+			moveDown(deltas);
 		} else {
-			location.x -= (speed) / Main.root2;
-			location.y += (speed) / Main.root2;
+			location.x -= (speed * deltas) / Main.root2;
+			location.y += (speed * deltas) / Main.root2;
 		}
 	}
 
-	public void update() {
-
+	public void update(float deltas) {
+		
 		if (Main.input.isKeyDown(KeyEvent.VK_W)) {
 			if (Main.input.isKeyDown(KeyEvent.VK_D)) {
-				moveUR();
+				moveUR(deltas);
 			} else if (Main.input.isKeyDown(KeyEvent.VK_A)) {
-				moveUL();
+				moveUL(deltas);
 			} else {
-				moveUp();
+				moveUp(deltas);
 			}
 		} else if (Main.input.isKeyDown(KeyEvent.VK_S)) {
 			if (Main.input.isKeyDown(KeyEvent.VK_D)) {
-				moveDR();
+				moveDR(deltas);
 			} else if (Main.input.isKeyDown(KeyEvent.VK_A)) {
-				moveDL();
+				moveDL(deltas);
 			} else {
-				moveDown();
+				moveDown(deltas);
 			}
 		} else if (Main.input.isKeyDown(KeyEvent.VK_D)) {
-			moveRight();
+			moveRight(deltas);
 		} else if (Main.input.isKeyDown(KeyEvent.VK_A)) {
-			moveLeft();
+			moveLeft(deltas);
 		}
 		
 		mouse = Main.input.getMousePositionOnScreen();
@@ -154,13 +157,23 @@ public class Player {
 	public void draw(Graphics g) {
 
 		Graphics2D g2 = (Graphics2D)g;
-		
+
+		g2.setColor(Color.blue);
+		g2.drawRect( (int) location.x - 16, (int) location.y - 16, 32, 32);
+		//-------------------------------------------------------------
 		AffineTransform save = g2.getTransform();
 		AffineTransform rotate = new AffineTransform();
 		rotate.rotate(angle+(Math.PI/2),location.x,location.y);
 		g2.setTransform(rotate);
 		g2.drawImage(picture, (int) location.x-16, (int) location.y-16, null);
 		g2.setTransform(save);
+		
+
+		float healthRatio = (health * 1000f / maxHealth);
+		g.setColor(Color.red);
+		g.fillRect(Main.width / 2 - 500, 50, 1000, 20);
+		g.setColor(Color.green);
+		g.fillRect(Main.width / 2 + 500 - (int) healthRatio, 50, (int) healthRatio, 20);
 	}
 
 }

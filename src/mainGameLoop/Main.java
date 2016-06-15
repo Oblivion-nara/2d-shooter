@@ -29,8 +29,7 @@ public class Main extends JFrame {
 	public static Random random;
 	public static boolean sound;
 	public static int width, height;
-	public static float ratio, tilesW, tilesH, widthpx, heightpx, zeroXCoord, zeroYCoord,
-			root2 = (float) Math.sqrt(2.0);
+	public static float zeroXCoord, zeroYCoord, root2 = (float) Math.sqrt(2.0);
 
 	private Map map;
 	private MainMenu manu;
@@ -75,17 +74,6 @@ public class Main extends JFrame {
 		input = new InputHandler(this);
 		width = this.getWidth();
 		height = this.getHeight();
-		ratio = (float) width / (float) height;
-		int tiles = 16;
-		if (height > width) {
-			tilesH = tiles;
-			tilesW = ratio * (float) tiles;
-		} else {
-			tilesW = tiles;
-			tilesH = (float) tiles / ratio;
-		}
-		heightpx = (float) height / tilesH;
-		widthpx = (float) width / tilesW;
 		map = new Map();
 	}
 
@@ -120,6 +108,7 @@ public class Main extends JFrame {
 
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
 			pause = true;
+			System.exit(0);
 		}
 	}
 

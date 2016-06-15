@@ -1,4 +1,4 @@
-package game;
+package gamePlay;
 
 import java.awt.Button;
 import java.awt.Frame;
@@ -31,7 +31,7 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void windowClosed(WindowEvent e) {
-				Map.nextWave();
+				Map.upgradesOpen = false;
 			}
 
 			@Override
@@ -211,7 +211,7 @@ public class Upgrades extends Frame {
 				if (player.points <= 0)
 					return;
 				player.points--;
-				player.rateOfFire += 100;
+				player.bulletSpeed += 100;
 				upgrade_points.setText("Point left: " + player.points);
 				bullet_speed_lv.setText("" + player.bulletSpeed);
 			}
@@ -231,9 +231,9 @@ public class Upgrades extends Frame {
 		});
 	}
 
-	public static void main(String args[]) {
-		Player p =new Player();
-		p.points = 2;
-		new Upgrades(p);
-	}
+//	public static void main(String args[]) {
+//		Player p =new Player();
+//		p.points = 2;
+//		new Upgrades(p);
+//	}
 }
