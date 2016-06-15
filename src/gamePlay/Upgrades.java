@@ -22,6 +22,8 @@ public class Upgrades extends Frame {
 		setSize(350, 360);
 		setVisible(true);
 		setLayout(null);
+		setLocationRelativeTo(null);
+		setResizable(false);
 
 		addWindowListener(new WindowListener() {
 			@Override
@@ -40,6 +42,7 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
+				e.getWindow().toFront();
 			}
 
 			@Override
@@ -48,6 +51,7 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void windowIconified(WindowEvent e) {
+				e.getWindow().dispose();
 			}
 
 			@Override

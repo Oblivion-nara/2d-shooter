@@ -26,6 +26,7 @@ public class Map {
 	private ArrayList<Enemy> enemies;
 	private Player player;
 	private ArrayList<Rectangle> enemyLocations;
+	private ArrayList<Point2D.Double> enemyDrops;
 
 	private ArrayList<Point2D.Double> trajectories;
 	private ArrayList<Line2D.Double> shots;
@@ -33,13 +34,13 @@ public class Map {
 	// base Wave stuff, wave 0 stats
 	private float baseZombiesPerSecond = 0.5f;
 	private long spawnTimer = 0;
-	private int wave = 0, baseMaxZombies = 19, baseZombiesPerRound = 19, baseZombieHealth = 91;
+	private int wave = 0, maxZombies = 20, baseZombiesPerRound = 5, baseZombieHealth = 91;
 	private boolean waveEnded;
 	public static boolean upgradesOpen;
 
 	// current wave stuff
-	private int maxZombies, zombiesPerRound, zombieHealth, zombiesSpawned;
-	private float zombiesPerSecond;
+	private int zombiesPerRound = 0, zombieHealth = 0, zombiesSpawned = 0;
+	private float zombiesPerSecond = 0;
 
 	// shooting
 	private long shotsound = 0;
@@ -88,17 +89,18 @@ public class Map {
 
 	private void spawn() {
 
-		if (zombiesSpawned < maxZombies && System.currentTimeMillis() >= spawnTimer) {
+		if (zombiesSpawned < zombiesPerRound && System.currentTimeMillis() >= spawnTimer
+				&& enemies.size() < maxZombies) {
 			Enemy e = new Enemy(player, zombieHealth);
 			e.health = zombieHealth;
 			enemies.add(e);
 			enemyLocations.add(new Rectangle((int) enemies.get(enemies.indexOf(e)).getLocation().x - 16,
 					(int) enemies.get(enemies.indexOf(e)).getLocation().y - 16, 32, 32));
 			zombiesSpawned++;
-			spawnTimer = System.currentTimeMillis() + (1000 / zombiesPerRound);
+			spawnTimer = System.currentTimeMillis() + (long) (1000f / zombiesPerSecond);
 
 		}
-		if (zombiesSpawned >= maxZombies && enemies.size() == 0) {
+		if (zombiesSpawned >= zombiesPerRound && enemies.size() == 0) {
 			waveEnded = true;
 		}
 		/**
@@ -119,9 +121,9 @@ public class Map {
 
 	public void startWaveX(int waveNumber) {
 		wave = waveNumber;
-		maxZombies = (int) Math.pow(baseMaxZombies, 1.1);
-		zombieHealth = (int) Math.pow(zombieHealth, 1.1);
-		zombiesPerRound += waveNumber;
+		zombieHealth = baseZombieHealth + (10 * waveNumber);
+		zombiesPerRound = baseZombiesPerRound + (5 * waveNumber);
+		zombiesPerSecond = baseZombiesPerSecond + (0.1f * waveNumber);
 		zombiesSpawned = 0;
 		spawnTimer = System.currentTimeMillis() + 1000;
 		waveEnded = false;
@@ -129,9 +131,9 @@ public class Map {
 
 	public void nextWave() {
 		wave++;
-		maxZombies = Math.max((int) (maxZombies * 1.1), (int) (baseMaxZombies * 1.1));
-		zombieHealth = Math.max((int) (zombieHealth * 1.1), (int) (baseZombieHealth * 1.1));
-		zombiesPerRound += 1;
+		zombieHealth = Math.max(zombieHealth + 10, baseZombieHealth + 10);
+		zombiesPerRound = Math.max(zombiesPerRound + 5, baseZombiesPerRound + 5);
+		zombiesPerSecond = Math.max(zombiesPerSecond + 0.1f, baseZombiesPerSecond + 0.1f);
 		zombiesSpawned = 0;
 		spawnTimer = System.currentTimeMillis() + 1000;
 		waveEnded = false;
@@ -176,10 +178,10 @@ public class Map {
 						shots.remove(j);
 						trajectories.remove(j);
 						if (!enemies.get(i).isAlive()) {
+							genPlayerPoint(enemyLocations.get(i));
 							enemyLocations.remove(i);
 							enemies.remove(i);
 							i--;
-							genPlayerPoint();
 							break;
 						}
 					}
@@ -217,11 +219,12 @@ public class Map {
 			upgradesOpen = true;
 			Upgrades up = new Upgrades(player);
 			up.repaint();
+			up.setFocusable(true);
 		}
 	}
 
-	private void genPlayerPoint() {
-		if (Main.random.nextDouble() > 0.8) {
+	private void genPlayerPoint(Rectangle deadZombie) {
+		if (Main.random.nextDouble() > 0.6) {
 			player.points++;
 		}
 	}
@@ -229,7 +232,6 @@ public class Map {
 	public void update(float deltas) {
 		player.update(deltas);
 		updateShots(deltas);
-		System.out.println(waveEnded + "," + maxZombies + "," + zombiesSpawned + "," + zombieHealth + "," + zombiesPerRound);
 		if (!waveEnded) {
 			spawn();
 

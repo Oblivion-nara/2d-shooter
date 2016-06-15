@@ -15,7 +15,8 @@ import mainGameLoop.Main;
 public class Enemy {
 
 	private Point2D.Double location;
-	private Image picture;
+	private Image livingZombie;
+	public Image deadZombie, deadZombieWithReward;
 	public int health;
 	public float speed = 90f, angle;
 	private Player p;
@@ -24,7 +25,9 @@ public class Enemy {
 	public Enemy(Player p, int health) {
 		this.p = p;
 		this.health = health;
-		picture = ResourceLoader.getImage("enemy.png");
+		livingZombie = ResourceLoader.getImage("liveZombie.png");
+		deadZombie = ResourceLoader.getImage("deadZombieNoReward.png");
+		deadZombieWithReward = ResourceLoader.getImage("deadZombieWithReward.png");
 		location = new Point2D.Double(Main.random.nextInt(Main.width), Main.random.nextInt(Main.height - 256) + 256);
 		this.speed = (float) (speed + Main.random.nextGaussian() * 20);
 		attackTimer = System.currentTimeMillis() + 1000;
@@ -65,7 +68,7 @@ public class Enemy {
 		AffineTransform rotate = new AffineTransform();
 		rotate.rotate(angle + (Math.PI / 2), location.x, location.y);
 		g2.setTransform(rotate);
-		g2.drawImage(picture, (int) location.x - 16, (int) location.y - 16, null);
+		g2.drawImage(livingZombie, (int) location.x - 16, (int) location.y - 16, null);
 		g2.setTransform(save);
 	}
 
