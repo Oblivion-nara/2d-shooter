@@ -17,7 +17,7 @@ import entities.Enemy;
 import entities.Player;
 import helpers.MathHelper;
 import helpers.ResourceLoader;
-import javafx.scene.input.KeyCode;
+import helpers.Sound;
 import mainGameLoop.Main;
 
 public class Map {
@@ -147,7 +147,7 @@ public class Map {
 			trajectories.add(MathHelper.getPoint(new Point2D.Double(player.location.x, player.location.y),
 					new Point2D.Double(mouseCoord.getX(), mouseCoord.getY()), speed, accuracy));
 			if (System.currentTimeMillis() > shotsound) {
-				// Sound.gunshot.play();
+				Sound.gunshot.play();
 				shotsound = System.currentTimeMillis() + 500;
 			}
 			shottimer = System.currentTimeMillis() + (long) (1000.0 / player.rateOfFire);
@@ -215,6 +215,10 @@ public class Map {
 		if (Main.input.isKeyDown(KeyEvent.VK_SPACE)) {
 			nextWave();
 		} else if (Main.input.isKeyDown(KeyEvent.VK_Q) && !upgradesOpen) {
+			Main.input.artificialKeyReleased(KeyEvent.VK_W);
+			Main.input.artificialKeyReleased(KeyEvent.VK_A);
+			Main.input.artificialKeyReleased(KeyEvent.VK_S);
+			Main.input.artificialKeyReleased(KeyEvent.VK_D);
 			Main.input.artificialKeyReleased(KeyEvent.VK_Q);
 			upgradesOpen = true;
 			Upgrades up = new Upgrades(player);

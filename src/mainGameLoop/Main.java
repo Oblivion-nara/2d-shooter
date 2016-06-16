@@ -9,12 +9,12 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import game.MainMenu;
 import gamePlay.Map;
 import helpers.InputHandler;
 import helpers.ResourceLoader;
+import helpers.Sound;
 
 public class Main extends JFrame {
 
@@ -23,6 +23,7 @@ public class Main extends JFrame {
 	private int FPS;
 	private float SPF, deltas;
 	private long currentTime, previousTime, deltaTime;
+	private Graphics g;
 	private Image BufferImage;
 
 	public static InputHandler input;
@@ -32,7 +33,7 @@ public class Main extends JFrame {
 	public static float zeroXCoord, zeroYCoord, root2 = (float) Math.sqrt(2.0);
 
 	private Map map;
-	private MainMenu manu;
+	private MainMenu menu;
 
 	public static void main(String args[]) {
 		Main main = new Main();
@@ -49,7 +50,9 @@ public class Main extends JFrame {
 			update();
 			draw();
 			if(pause){
-//				menu.run(BufferImage);
+				menu.run(BufferImage);
+				pause = false;
+				currentTime =System.nanoTime() + 1000;
 			}
 			previousTime = currentTime;
 		}
@@ -60,8 +63,7 @@ public class Main extends JFrame {
 		setFrame();
 		setVariables();
 		setCursor();
-
-		// Sound.dayNNight.loop();
+		Sound.dayNNight.loop();
 	}
 
 	private void setVariables() {
@@ -71,7 +73,9 @@ public class Main extends JFrame {
 		previousTime = System.nanoTime();
 		FPS = this.getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
 		SPF = 1f / FPS;
+		g = this.getGraphics();
 		input = new InputHandler(this);
+		menu = new MainMenu(g);
 		width = this.getWidth();
 		height = this.getHeight();
 		map = new Map();
@@ -107,8 +111,8 @@ public class Main extends JFrame {
 		map.update(deltas);
 
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
+			input.artificialKeyReleased(KeyEvent.VK_ESCAPE);
 			pause = true;
-			System.exit(0);
 		}
 	}
 
@@ -121,7 +125,6 @@ public class Main extends JFrame {
 		map.draw(BufferGraphics);
 
 		// to here
-		Graphics g = this.getGraphics();
 		g.drawImage(BufferImage, 0, 0, width, height, null);
 
 	}
