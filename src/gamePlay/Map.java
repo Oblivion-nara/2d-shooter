@@ -1,6 +1,8 @@
 package gamePlay;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -264,6 +266,18 @@ public class Map {
 			enemy.draw(g);
 		}
 		player.draw(g);
+		if (waveEnded) {
+			String help1 = "Press 'Q' to open upgrades";
+			String help2 = "Press 'SPACE' to start next wave";
+			g.setFont(new Font("Verdana", Font.BOLD, Main.width/50));
+			g.setColor(new Color(0,0,0,127));
+			FontMetrics met = g.getFontMetrics();
+			int l1 = met.stringWidth(help1);
+			int l2 = met.stringWidth(help2);
+			g.drawString(help1, Main.width/2 - l1/2, Main.height/2);
+			g.drawString(help2, Main.width/2 - l2/2, 3*Main.height/4);
+		}
+
 	}
 
 }

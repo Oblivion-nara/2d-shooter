@@ -74,10 +74,10 @@ public class Main extends JFrame {
 		FPS = this.getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
 		SPF = 1f / FPS;
 		g = this.getGraphics();
-		input = new InputHandler(this);
-		menu = new MainMenu(g);
 		width = this.getWidth();
 		height = this.getHeight();
+		input = new InputHandler(this);
+		menu = new MainMenu(g);
 		map = new Map();
 	}
 
@@ -125,8 +125,16 @@ public class Main extends JFrame {
 		map.draw(BufferGraphics);
 
 		// to here
+		drawScreenLayout(BufferGraphics);
 		g.drawImage(BufferImage, 0, 0, width, height, null);
 
+	}
+	
+	private void drawScreenLayout(Graphics g){
+
+		g.drawLine(width/2, 0, width/2, height);
+		g.drawLine(0, height/2, width, height/2);
+		
 	}
 
 }
