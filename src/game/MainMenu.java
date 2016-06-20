@@ -14,7 +14,6 @@ import java.awt.image.Kernel;
 
 import com.sun.glass.events.KeyEvent;
 
-import javafx.scene.input.MouseButton;
 import mainGameLoop.Main;
 
 public class MainMenu {
@@ -23,7 +22,7 @@ public class MainMenu {
 	private Image buffer;
 	private boolean resume;
 
-	private boolean mouseOnResume, mouseOnSave, mouseOnSettings, mouseOnExit, set, click;
+	private boolean mouseOnResume, mouseOnSave, mouseOnSettings, mouseOnExit, click;
 	private int width, height, section;
 
 	public MainMenu(Graphics g) {

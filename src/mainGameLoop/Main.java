@@ -6,10 +6,12 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
+import entities.Player;
 import game.MainMenu;
 import gamePlay.Map;
 import helpers.InputHandler;
@@ -25,6 +27,7 @@ public class Main extends JFrame {
 	private long currentTime, previousTime, deltaTime;
 	private Graphics g;
 	private Image BufferImage;
+	private Player player;
 
 	public static InputHandler input;
 	public static Random random;
@@ -49,10 +52,10 @@ public class Main extends JFrame {
 			deltas = ((float) deltaTime / 1000000000f);
 			update();
 			draw();
-			if(pause){
+			if (pause) {
 				menu.run(BufferImage);
 				pause = false;
-				currentTime =System.nanoTime() + 1000;
+				currentTime = System.nanoTime() + 1000;
 			}
 			previousTime = currentTime;
 		}
@@ -77,8 +80,9 @@ public class Main extends JFrame {
 		width = this.getWidth();
 		height = this.getHeight();
 		input = new InputHandler(this);
+		player = new Player();
 		menu = new MainMenu(g);
-		map = new Map();
+		map = new MainMap(player);
 	}
 
 	private void setCursor() {
@@ -111,6 +115,7 @@ public class Main extends JFrame {
 		map.update(deltas);
 
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
+			System.exit(0);
 			input.artificialKeyReleased(KeyEvent.VK_ESCAPE);
 			pause = true;
 		}
@@ -123,18 +128,19 @@ public class Main extends JFrame {
 		// draw here
 
 		map.draw(BufferGraphics);
+		map.drawGUI(BufferGraphics);
 
 		// to here
-		drawScreenLayout(BufferGraphics);
+//		drawScreenLayout(BufferGraphics);
+
 		g.drawImage(BufferImage, 0, 0, width, height, null);
+	}
+
+	private void drawScreenLayout(Graphics g) {
+
+		g.drawLine(width / 2, 0, width / 2, height);
+		g.drawLine(0, height / 2, width, height / 2);
 
 	}
 	
-	private void drawScreenLayout(Graphics g){
-
-		g.drawLine(width/2, 0, width/2, height);
-		g.drawLine(0, height/2, width, height/2);
-		
-	}
-
 }

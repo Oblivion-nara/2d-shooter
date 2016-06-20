@@ -15,6 +15,7 @@ public class Upgrades extends Frame {
 
 	private static final long serialVersionUID = 10L;
 
+	public static boolean upgradesOpen;
 	public Map map;
 	
 	public Upgrades(Player player) {
@@ -33,7 +34,7 @@ public class Upgrades extends Frame {
 
 			@Override
 			public void windowClosed(WindowEvent e) {
-				Map.upgradesOpen = false;
+				upgradesOpen = false;
 			}
 
 			@Override

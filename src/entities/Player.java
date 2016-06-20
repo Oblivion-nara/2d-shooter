@@ -149,7 +149,7 @@ public class Player {
 		}
 		
 		mouse = Main.input.getMousePositionOnScreen();
-		angle = (float)MathHelper.getAngle(new Point((int)location.x, (int)location.y),mouse);
+		angle = (float)MathHelper.getAngle(new Point((int)Main.width/2, (int)Main.height/2),mouse);
 		hitBox.setLocation((int)location.x, (int)location.y);
 		
 	}
@@ -168,6 +168,9 @@ public class Player {
 		g2.drawImage(picture, (int) location.x-16, (int) location.y-16, null);
 		g2.setTransform(save);
 		
+	}
+
+	public void drawGUI(Graphics g){
 
 		float healthRatio = (health * 1000f / maxHealth);
 		g.setColor(Color.red);
@@ -175,5 +178,5 @@ public class Player {
 		g.setColor(Color.green);
 		g.fillRect(Main.width / 2 + 500 - (int) healthRatio, 50, (int) healthRatio, 20);
 	}
-
+	
 }
