@@ -57,71 +57,71 @@ public class Player {
 	}
 
 	public void moveUp(float deltas) {
-		if(location.y > 256){
+//		if(location.y > 256){
 			location.y -= speed * deltas;
-		}
+//		}
 	}
 
 	public void moveDown(float deltas) {
-		if(location.y < (playArea-1)*Main.height/playArea){
+//		if(location.y < (playArea-1)*Main.height/playArea){
 			location.y += speed * deltas;
-		}
+//		}
 	}
 
 	public void moveRight(float deltas) {
-		if(location.x < (playArea-1)*Main.width/playArea){
+//		if(location.x < (playArea-1)*Main.width/playArea){
 			location.x += speed * deltas;
-		}
+//		}
 	}
 
 	public void moveLeft(float deltas) {
-		if(location.x > Main.width/playArea){
+//		if(location.x > Main.width/playArea){
 			location.x -= speed * deltas;
-		}
+//		}
 	}
 
 	public void moveUR(float deltas) {
-		if (location.y <= 256) {
-			moveRight(deltas);
-		} else if (location.x >= (playArea-1)*Main.width/playArea) {
-			moveUp(deltas);
-		} else {
+//		if (location.y <= 256) {
+//			moveRight(deltas);
+//		} else if (location.x >= (playArea-1)*Main.width/playArea) {
+//			moveUp(deltas);
+//		} else {
 			location.x += (speed * deltas) / Main.root2;
 			location.y -= (speed * deltas) / Main.root2;
-		}
+//		}
 	}
 
 	public void moveUL(float deltas) {
-		if (location.y <= 256) {
-			moveLeft(deltas);
-		} else if (location.x <= Main.width/playArea) {
-			moveUp(deltas);
-		} else {
+//		if (location.y <= 256) {
+//			moveLeft(deltas);
+//		} else if (location.x <= Main.width/playArea) {
+//			moveUp(deltas);
+//		} else {
 			location.x -= (speed * deltas) / Main.root2;
 			location.y -= (speed * deltas) / Main.root2;
-		}
+//		}
 	}
 
 	public void moveDR(float deltas) {
-		if (location.y >= (playArea-1)*Main.height/playArea) {
-			moveRight(deltas);
-		} else if (location.x >= (playArea-1)*Main.width/playArea) {
-			moveDown(deltas);
-		} else {
+//		if (location.y >= (playArea-1)*Main.height/playArea) {
+//			moveRight(deltas);
+//		} else if (location.x >= (playArea-1)*Main.width/playArea) {
+//			moveDown(deltas);
+//		} else {
 			location.x += (speed * deltas) / Main.root2;
 			location.y += (speed * deltas) / Main.root2;
-		}
+//		}
 	}
 
 	public void moveDL(float deltas) {
-		if (location.y >= (playArea-1)*Main.height/playArea) {
-			moveLeft(deltas);
-		} else if (location.x <= Main.width/playArea) {
-			moveDown(deltas);
-		} else {
+//		if (location.y >= (playArea-1)*Main.height/playArea) {
+//			moveLeft(deltas);
+//		} else if (location.x <= Main.width/playArea) {
+//			moveDown(deltas);
+//		} else {
 			location.x -= (speed * deltas) / Main.root2;
 			location.y += (speed * deltas) / Main.root2;
-		}
+//		}
 	}
 
 	public void update(float deltas) {

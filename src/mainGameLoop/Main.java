@@ -6,13 +6,13 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
 import entities.Player;
 import game.MainMenu;
+import gamePlay.GrassMap;
 import gamePlay.Map;
 import helpers.InputHandler;
 import helpers.ResourceLoader;
@@ -82,7 +82,7 @@ public class Main extends JFrame {
 		input = new InputHandler(this);
 		player = new Player();
 		menu = new MainMenu(g);
-		map = new MainMap(player);
+		map = new GrassMap(player);
 	}
 
 	private void setCursor() {

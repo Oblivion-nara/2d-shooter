@@ -1,5 +1,6 @@
 package gamePlay;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -39,6 +40,17 @@ public class Map {
 	public Map() { 
 	}
 	
+	public void update(float deltas){
+		
+	}
+	
+	public void draw(Graphics g){
+		
+	}
+	
+	public void drawGUI(Graphics g){
+		
+	}
 }
 
 
