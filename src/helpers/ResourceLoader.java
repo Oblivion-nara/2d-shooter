@@ -26,7 +26,7 @@ public class ResourceLoader {
 	public static Image getImage(String path){
 		try{
 			
-			URL url = rl.getClass().getClassLoader().getResource("zResources/images/" + path);
+			URL url = rl.getClass().getClassLoader().getResource("zResources/images/" + path + ".png");
 			return new ImageIcon(url).getImage();
 		}catch (Exception e){
 			e.printStackTrace();
@@ -36,7 +36,8 @@ public class ResourceLoader {
 	
 	public static BufferedImage getBufferedImage(String path) {
 		try {
-			return ImageIO.read(ResourceLoader.class.getResource("zResources/images/" + path));
+			URL url = rl.getClass().getClassLoader().getResource("zResources/images/" + path + ".png");
+			return ImageIO.read(url);
 		} catch (IOException e) {
 			System.out.println("failed to load");
 			e.printStackTrace();

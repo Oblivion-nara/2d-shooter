@@ -1,6 +1,5 @@
 package entities;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -25,9 +24,9 @@ public class Enemy {
 	public Enemy(Player p, int health) {
 		this.p = p;
 		this.health = health;
-		livingZombie = ResourceLoader.getImage("liveZombie.png");
-		deadZombie = ResourceLoader.getImage("deadZombieNoReward.png");
-		deadZombieWithReward = ResourceLoader.getImage("deadZombieWithReward.png");
+		livingZombie = ResourceLoader.getImage("liveZombie");
+		deadZombie = ResourceLoader.getImage("deadZombieNoReward");
+		deadZombieWithReward = ResourceLoader.getImage("deadZombieWithReward");
 		location = new Point2D.Double(Main.random.nextInt(Main.width), Main.random.nextInt(Main.height - 256) + 256);
 		this.speed = (float) (speed + Main.random.nextGaussian() * 20);
 		attackTimer = System.currentTimeMillis() + 1000;
@@ -61,9 +60,6 @@ public class Enemy {
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 
-		g2.setColor(Color.orange);
-		g2.drawRect( (int) location.x - 16, (int) location.y - 16, 32, 32);
-		//-------------------------------------------------------------
 		AffineTransform save = g2.getTransform();
 		AffineTransform rotate = new AffineTransform();
 		rotate.rotate(angle + (Math.PI / 2), location.x, location.y);

@@ -2,6 +2,8 @@ package mainGameLoop;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -11,9 +13,8 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import entities.Player;
+import game.MainMap;
 import game.MainMenu;
-import gamePlay.GrassMap;
-import gamePlay.Map;
 import helpers.InputHandler;
 import helpers.ResourceLoader;
 import helpers.Sound;
@@ -35,7 +36,7 @@ public class Main extends JFrame {
 	public static int width, height;
 	public static float zeroXCoord, zeroYCoord, root2 = (float) Math.sqrt(2.0);
 
-	private Map map;
+	private MainMap map;
 	private MainMenu menu;
 
 	public static void main(String args[]) {
@@ -74,7 +75,7 @@ public class Main extends JFrame {
 		running = true;
 		random = new Random();
 		previousTime = System.nanoTime();
-		FPS = this.getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
+		FPS = this.getGraphicsConfiguration().getDevice().getDisplayModes()[1].getRefreshRate();
 		SPF = 1f / FPS;
 		g = this.getGraphics();
 		width = this.getWidth();
@@ -82,7 +83,7 @@ public class Main extends JFrame {
 		input = new InputHandler(this);
 		player = new Player();
 		menu = new MainMenu(g);
-		map = new GrassMap(player);
+		map = new MainMap(player);
 	}
 
 	private void setCursor() {
@@ -90,8 +91,8 @@ public class Main extends JFrame {
 		boolean fix = false;
 		while (!fix) {
 			try {
-				cursor = Toolkit.getDefaultToolkit().createCustomCursor(ResourceLoader.getImage("cursor.png"),
-						new Point(getX(), getY()), "c");
+				cursor = Toolkit.getDefaultToolkit().createCustomCursor(ResourceLoader.getImage("cursor"),
+						new Point(16,16), "c");
 				fix = true;
 			} catch (Exception e) {
 				System.out.println("fail");
@@ -102,11 +103,20 @@ public class Main extends JFrame {
 	}
 
 	private void setFrame() {
+		
 		this.setTitle("Day And Night");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(InputHandler.screenSize);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setUndecorated(true);
+		
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gds = ge.getScreenDevices();
+		
+		if(gds.length > 0){
+			gds[0].setFullScreenWindow(this);
+		}
+		
 		this.setVisible(true);
 	}
 
@@ -130,7 +140,7 @@ public class Main extends JFrame {
 		map.draw(BufferGraphics);
 		map.drawGUI(BufferGraphics);
 
-		// to here
+		//	to here
 //		drawScreenLayout(BufferGraphics);
 
 		g.drawImage(BufferImage, 0, 0, width, height, null);

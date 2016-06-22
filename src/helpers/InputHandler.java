@@ -21,9 +21,11 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 	
 	private boolean[] keyArray = new boolean[256];
 	private boolean[] mouseArray = new boolean[MouseInfo.getNumberOfButtons()];
-	private boolean overComp, mouseWheelUp = false, mouseWheelDown = false;
+	private boolean overComp, mouseWheelMoved = false;
 	private String typedAcum = "";
+	private Point lastMousePosition = new Point(0,0);
 	private Component c;
+	private double mouseWheelRotation = 0;
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	public static Point2D.Double midPoint = new Point2D.Double((double)screenSize.width/2, (double)screenSize.height/2);
 	
@@ -36,8 +38,9 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 		c.addMouseListener(this);
 		c.addMouseWheelListener(this);
 		this.c = c;
+		
 	}
-	
+
 	/**
 	 * returns the position of the mouse on the screen
 	 * @return the position of the mouse on the screen as a Point
@@ -45,7 +48,10 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 	public Point getMousePositionOnScreen(){
 		try {
 			Point p = MouseInfo.getPointerInfo().getLocation();
-			p.translate(16, 16);
+			if(p == null){
+				return lastMousePosition;
+			}
+			lastMousePosition = p;
 			return p;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +66,10 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 	public Point getMousePositionRelativeToComponent(){
 		try {
 			Point p = c.getMousePosition();
-			p.translate(16, 16);
+			if(p == null){
+				return lastMousePosition;
+			}
+			lastMousePosition = p;
 			return p;
 		} catch (Exception e){
 			e.printStackTrace();
@@ -149,31 +158,41 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 		mouseArray[mouseButton] = false;
 	}
 	
-	public boolean getMouseWheelUp(){
-		return mouseWheelUp;
-	}
-	
-	public boolean getMouseWheelDown(){
-		return mouseWheelDown;
-	}
+//	public boolean getMouseWheelUp(){
+//		return mouseWheelUp;
+//	}
+//	
+//	public boolean getMouseWheelDown(){
+//		return mouseWheelDown;
+//	}
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		if(e.getWheelRotation() < 0){
-			mouseWheelUp = true;
-			mouseWheelDown = false;
-		}else if (e.getWheelRotation() > 0){
-			mouseWheelUp = false;
-			mouseWheelDown = true;
-		}else{
-			mouseWheelUp = false;
-			mouseWheelDown = false;
-		}
+	public boolean hasMouseWheelMoved(){
+		return mouseWheelMoved;
 	}
 	
+	@Override
+	/**
+	 * positive value is down/towards user negative value is up/away from user
+	 */
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		mouseWheelRotation = e.getWheelRotation();
+		mouseWheelMoved = true;
+	}
+	
+	/**
+	 * get the rotation amount of the mouse wheel
+	 * @return rotation amount as a double
+	 */
+	public double getMouseWheelRotation() {
+		mouseWheelMoved = false;
+		return mouseWheelRotation;
+	}
+	
+	/**
+	 * stops the mouse wheel
+	 */
 	public void stopMouseWheel(){
-		mouseWheelUp = false;
-		mouseWheelDown = false;
+		mouseWheelMoved = false;
 	}
 
 }

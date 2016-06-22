@@ -22,81 +22,11 @@ import helpers.ResourceLoader;
 import helpers.Sound;
 import mainGameLoop.Main;
 
-public class GrassMap extends Map{
+public class GrassMap extends Map {
 
 	public GrassMap(Player p) {
+		super();
 		init(p);
-	}
-
-	private void init(Player p) {
-
-		player = p;
-		player.location = new Point2D.Double(Main.width*3/2, Main.height*3/2);
-
-		zoomlevel = 1;
-		enemies = new ArrayList<Enemy>();
-		enemyLocations = new ArrayList<Rectangle>();
-		trajectories = new ArrayList<Point2D.Double>();
-		shots = new ArrayList<Line2D.Double>();
-		background = new BufferedImage(Main.width, Main.height, BufferedImage.TYPE_INT_ARGB);
-
-		Graphics g = background.getGraphics();
-		g.setColor(new Color(0xdd, 0xa3, 0x3d));
-		g.fillRect(0, 0, Main.width, Main.height);
-		g.setColor(new Color(0x04, 0xac, 0x1c));
-		g.fillRect(0, 0, Main.width, 256);
-
-		Image shrub = ResourceLoader.getImage("shrub.png");
-		for (int i = 0; i < Main.random.nextInt(10) + 5; i++) {
-			g.drawImage(shrub, Main.random.nextInt(Main.width), Main.random.nextInt(Main.height), null);
-		}
-		Image house1 = ResourceLoader.getImage("house1.png");
-		Image house2 = ResourceLoader.getImage("house2.png");
-		int x = 0;
-		while (x < Main.width) {
-			if (Main.random.nextBoolean()) {
-				g.drawImage(house1, x, 128, null);
-				x += 256;
-			} else {
-				g.drawImage(house2, x, 0, null);
-				x += 512;
-			}
-		}
-		wave = 0;
-		waveEnded = true;
-
-	}
-
-	private void spawn() {
-
-		if (zombiesSpawned < zombiesPerRound && System.currentTimeMillis() >= spawnTimer
-				&& enemies.size() < maxZombies) {
-			Enemy e = new Enemy(player, zombieHealth);
-			e.health = zombieHealth;
-			enemies.add(e);
-			enemyLocations.add(new Rectangle((int) enemies.get(enemies.indexOf(e)).getLocation().x - 16,
-					(int) enemies.get(enemies.indexOf(e)).getLocation().y - 16, 32, 32));
-			zombiesSpawned++;
-			spawnTimer = System.currentTimeMillis() + (long) (1000f / zombiesPerSecond);
-
-		}
-		if (zombiesSpawned >= zombiesPerRound && enemies.size() == 0) {
-			waveEnded = true;
-		}
-		/**
-		 * legacy if (waveDurationLeft > 0 && System.currentTimeMillis() >=
-		 * waveTimer) { Enemy e = new Enemy(player); e.health = zombieHealth;
-		 * enemies.add(e); enemyLocations.add(new Rectangle((int)
-		 * enemies.get(enemies.indexOf(e)).getLocation().x - 16, (int)
-		 * enemies.get(enemies.indexOf(e)).getLocation().y - 16, 32, 32));
-		 * waveTimer += 1000 / zombiesPerSecond + 1; waveDurationLeft -= 1000 /
-		 * zombiesPerSecond + 1; if (waveDurationLeft < 0) { if
-		 * (zombiesPerSecond >= 5) zombiesPerSecond *= 1.1; else
-		 * zombiesPerSecond++; zombieHealth *= 1.1; } } else if
-		 * (waveDurationLeft <= 0 && !upgradesOpened &&
-		 * !enemies.stream().anyMatch(e -> e.health >= 0)) { new
-		 * Upgrades(player); upgradesOpened = true; }
-		 */
 	}
 
 	public void startWaveX(int waveNumber) {
@@ -119,14 +49,17 @@ public class GrassMap extends Map{
 		waveEnded = false;
 	}
 
+	// will be in gun class
 	private void shoot(Point mouseCoord) {
 		if (System.currentTimeMillis() > shottimer) {
 			double accuracy = 1.0 / player.accuracy;
 			shots.add(new Line2D.Double(player.location.x, player.location.y, player.location.x, player.location.y));
 			double speed = player.bulletSpeed;
 
-			trajectories.add(MathHelper.getPoint(new Point2D.Double(Main.width / 2, Main.height / 2),
-					new Point2D.Double(mouseCoord.getX(), mouseCoord.getY()), speed, accuracy));
+			trajectories.add(MathHelper.getPoint(new Point2D.Double(player.location.x, player.location.y),
+					new Point2D.Double((mouseCoord.getX() - actualX) / zoomlevel,
+							(mouseCoord.getY() - actualY) / zoomlevel),
+					speed, accuracy));
 			if (System.currentTimeMillis() > shotsound) {
 				Sound.gunshot.play();
 				shotsound = System.currentTimeMillis() + 500;
@@ -135,6 +68,7 @@ public class GrassMap extends Map{
 		}
 	}
 
+	// checks if the player is damaged
 	private void playerDamage() {
 
 		for (int i = 0; i < enemies.size(); i++) {
@@ -146,6 +80,7 @@ public class GrassMap extends Map{
 		}
 	}
 
+	// checks if the enemy is damaged
 	private void enemyDamage() {
 		for (int i = 0; i < enemies.size(); i++) {
 
@@ -175,6 +110,7 @@ public class GrassMap extends Map{
 		}
 	}
 
+	// will be in gun class
 	private void updateShots(float deltas) {
 		for (int i = 0; i < shots.size(); i++) {
 
@@ -208,46 +144,19 @@ public class GrassMap extends Map{
 		}
 	}
 
-	private void genPlayerPoint(Rectangle deadZombie) {
-		if (Main.random.nextDouble() > 0.6) {
-			player.points++;
-		}
-	}
-
-	private void zoom(float deltas) {
-
-		if (Main.input.getMouseWheelUp() && zoomlevel < 2) {
-			Main.input.stopMouseWheel();
-			zoomlevel += deltas * 10;
-		}
-		if (zoomlevel > 2) {
-			zoomlevel = 2f;
-		}
-		if (Main.input.getMouseWheelDown() && zoomlevel > 0.5) {
-			Main.input.stopMouseWheel();
-			zoomlevel -= deltas * 10;
-		}
-		if (zoomlevel < 0.5) {
-			zoomlevel = 0.5f;
-		}
-		if (Main.input.isMouseDown(MouseEvent.BUTTON2)) {
-			zoomlevel = 1;
-		}
-	}
-
 	public void update(float deltas) {
-		player.update(deltas);
+		player.update(deltas, zoomlevel, actualX, actualY);
 		updateShots(deltas);
 		if (!waveEnded) {
 			spawn();
 
 			if (Main.input.isMouseDown(MouseEvent.BUTTON1)) {
-				shoot(Main.input.getMousePositionOnScreen());
+				shoot(Main.input.getMousePositionRelativeToComponent());
 			}
 
-			// for (Enemy enemy : enemies) {
-			// enemy.update(deltas);
-			// }
+			for (Enemy enemy : enemies) {
+				enemy.update(deltas);
+			}
 
 			enemyDamage();
 			playerDamage();
@@ -259,15 +168,15 @@ public class GrassMap extends Map{
 
 	public void draw(Graphics g2) {
 
-		BufferedImage buffer = new BufferedImage(3 * Main.width, 3 * Main.height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage buffer = new BufferedImage(background.getWidth(), background.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = buffer.getGraphics();
-		g.setColor(Color.BLACK);
+		g.setColor(Color.white);
 		g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-		int x = background.getWidth();
-		int y = background.getHeight();
-		int halfW = 3*Main.width/2;
-		int halfH = 3*Main.height/2;
-		g.drawImage(background, halfW - x/2, halfH - y/2, x, y, null);
+		int x = buffer.getWidth();// image size
+		int y = buffer.getHeight();
+		int halfW = 3 * Main.width / 2;// buffer size
+		int halfH = 3 * Main.height / 2;
+		g.drawImage(background, halfW - x / 2, halfH - y / 2, x, y, null);
 		for (int i = 0; i < shots.size(); i++) {
 			g.drawLine((int) shots.get(i).getX1(), (int) shots.get(i).getY1(), (int) shots.get(i).getX2(),
 					(int) shots.get(i).getY2());
@@ -277,10 +186,19 @@ public class GrassMap extends Map{
 		}
 		player.draw(g);
 
-		x = (int) ((-zoomlevel * player.location.x) + Main.width/2);
-		y = (int) ((-zoomlevel * player.location.y) + Main.height/2);
-		g2.drawImage(buffer, x, y, (int) (x + (3*Main.width * zoomlevel)), (int) (y + (3*Main.height * zoomlevel)),
-				0,0,buffer.getWidth(), buffer.getHeight(), null);
+		int xRelativeToPlayer = (int) ((-zoomlevel * player.location.x) + Main.width / 2); 
+		// screen x without correction
+		int yRelativeToPlayer = (int) ((-zoomlevel * player.location.y) + Main.height / 2); 
+		// screen y without correction
+		int width = (int) (3 * Main.width * zoomlevel); // width of image
+		int height = (int) (3 * Main.height * zoomlevel); // height of image
+		actualX = Math.max(0, Math.min(x - width, xRelativeToPlayer)); 
+		// screen x with correction
+		actualY = Math.max(0, Math.min(y - height, yRelativeToPlayer)); 
+		// screen y with correction
+
+		g2.drawImage(buffer, actualX, actualY, actualX + width, actualY + height, 0, 0, buffer.getWidth(),
+				buffer.getHeight(), null);
 	}
 
 	public void drawGUI(Graphics g2) {
@@ -299,3 +217,28 @@ public class GrassMap extends Map{
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
