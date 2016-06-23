@@ -168,15 +168,14 @@ public class GrassMap extends Map {
 
 	public void draw(Graphics g2) {
 
-		BufferedImage buffer = new BufferedImage(background.getWidth(), background.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage buffer = new BufferedImage(background.getWidth(), background.getHeight(),
+				BufferedImage.TYPE_INT_ARGB);
 		Graphics g = buffer.getGraphics();
 		g.setColor(Color.white);
 		g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 		int x = buffer.getWidth();// image size
 		int y = buffer.getHeight();
-		int halfW = 3 * Main.width / 2;// buffer size
-		int halfH = 3 * Main.height / 2;
-		g.drawImage(background, halfW - x / 2, halfH - y / 2, x, y, null);
+		g.drawImage(background, 0, 0, null);
 		for (int i = 0; i < shots.size(); i++) {
 			g.drawLine((int) shots.get(i).getX1(), (int) shots.get(i).getY1(), (int) shots.get(i).getX2(),
 					(int) shots.get(i).getY2());
@@ -186,19 +185,18 @@ public class GrassMap extends Map {
 		}
 		player.draw(g);
 
-		int xRelativeToPlayer = (int) ((-zoomlevel * player.location.x) + Main.width / 2); 
+		int xRelativeToPlayer = (int) ((-zoomlevel * player.location.x) + Main.width / 2);
 		// screen x without correction
-		int yRelativeToPlayer = (int) ((-zoomlevel * player.location.y) + Main.height / 2); 
+		int yRelativeToPlayer = (int) ((-zoomlevel * player.location.y) + Main.height / 2);
 		// screen y without correction
-		int width = (int) (3 * Main.width * zoomlevel); // width of image
-		int height = (int) (3 * Main.height * zoomlevel); // height of image
-		actualX = Math.max(0, Math.min(x - width, xRelativeToPlayer)); 
+		int width = (int) (buffer.getWidth() * zoomlevel); // width of image
+		int height = (int) (buffer.getHeight() * zoomlevel); // height of image
+		actualX = Math.max(Main.width-width, Math.min(0, xRelativeToPlayer));
 		// screen x with correction
-		actualY = Math.max(0, Math.min(y - height, yRelativeToPlayer)); 
+		actualY = Math.max(Main.height-height,Math.min(0, yRelativeToPlayer));
 		// screen y with correction
 
-		g2.drawImage(buffer, actualX, actualY, actualX + width, actualY + height, 0, 0, buffer.getWidth(),
-				buffer.getHeight(), null);
+		g2.drawImage(buffer, 0, 0, Main.width, Main.width, actualX, actualY, actualX + width, actualY + height, null);
 	}
 
 	public void drawGUI(Graphics g2) {
@@ -217,28 +215,3 @@ public class GrassMap extends Map {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -58,7 +58,7 @@ public abstract class Map {
 		
 		Image ground = ResourceLoader.getImage("trainingGround");
 		
-		background = new BufferedImage(ground.getWidth(null), ground.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		background = new BufferedImage(Main.width * 3, Main.height * 3, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = background.getGraphics();
 		
 		g.drawImage(ground,0,0,Main.width * 3, Main.height * 3,0,0,ground.getWidth(null), ground.getHeight(null), null);

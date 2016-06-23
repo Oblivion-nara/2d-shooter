@@ -47,12 +47,22 @@ public class Main extends JFrame {
 
 	public void run() {
 		initialise();
+		int loops = 0,loop = 0;
+		long secondT = System.currentTimeMillis();
+		System.out.println(Integer.MAX_VALUE);
 		while (running) {
 			currentTime = System.nanoTime();
 			deltaTime = currentTime - previousTime;
 			deltas = ((float) deltaTime / 1000000000f);
-			update();
-			draw();
+//			update();
+//			draw();
+			loops++;
+			loop++;
+			if(secondT < System.currentTimeMillis()){
+				secondT += 1000;
+				System.out.println(loops+", total:"+loop);
+				loops = 0;
+			}
 			if (pause) {
 				menu.run(BufferImage);
 				pause = false;
