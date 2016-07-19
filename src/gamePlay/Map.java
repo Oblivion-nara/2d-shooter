@@ -16,7 +16,11 @@ import mainGameLoop.Main;
 
 public abstract class Map {
 
+	//map layout stuff
 	protected BufferedImage background;
+	protected int[][] tileIDs;
+
+	// enemy and player stuff
 	protected ArrayList<Enemy> enemies;
 	protected Player player;
 	protected ArrayList<Rectangle> enemyLocations;

@@ -54,8 +54,8 @@ public class Main extends JFrame {
 			currentTime = System.nanoTime();
 			deltaTime = currentTime - previousTime;
 			deltas = ((float) deltaTime / 1000000000f);
-//			update();
-//			draw();
+			update();
+			draw();
 			loops++;
 			loop++;
 			if(secondT < System.currentTimeMillis()){
