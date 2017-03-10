@@ -158,13 +158,13 @@ public class InputHandler implements KeyListener, MouseListener, MouseWheelListe
 		mouseArray[mouseButton] = false;
 	}
 	
-//	public boolean getMouseWheelUp(){
-//		return mouseWheelUp;
-//	}
-//	
-//	public boolean getMouseWheelDown(){
-//		return mouseWheelDown;
-//	}
+	public boolean getMouseWheelUp(){
+		return mouseWheelRotation < 0;
+	}
+	
+	public boolean getMouseWheelDown(){
+		return mouseWheelRotation > 0;
+	}
 
 	public boolean hasMouseWheelMoved(){
 		return mouseWheelMoved;
